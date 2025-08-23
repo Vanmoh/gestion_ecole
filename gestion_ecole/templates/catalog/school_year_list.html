@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Années scolaires{% endblock %}
+{% block content %}
+<h2>Années scolaires</h2>
+<p>
+  {% if perms.catalog.add_schoolyear %}
+    <a class="btn" href="{% url 'school_year_new' %}">+ Nouvelle année</a>
+  {% endif %}
+</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>École</th>
+      <th>Libellé</th>
+      <th>Début</th>
+      <th>Fin</th>
+      <th>Active (modèle)</th>
+      <th>Session</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for y in items %}
+    <tr>
+      <td>{{ y.school.name }}</td>
+      <td>{{ y.label }}</td>
+      <td>{{ y.start_date }}</td>
+      <td>{{ y.end_date }}</td>
+      <td>{{ y.is_active|yesno:"Oui,Non" }}</td>
+      <td>
+        {% if active_school_year and active_school_year.id == y.id %}
+          <strong>Actif</strong>
+        {% else %}
+          <a class="btn btn--ghost" href="{% url 'switch_schoolyear' y.pk %}">Activer</a>
+        {% endif %}
+      </td>
+      <td style="white-space:nowrap">
+        {% if perms.catalog.change_schoolyear %}<a href="{% url 'school_year_edit' y.pk %}">Modifier</a>{% endif %}
+        {% if perms.catalog.delete_schoolyear %} | <a href="{% url 'school_year_delete' y.pk %}">Supprimer</a>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7">Aucune année scolaire.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

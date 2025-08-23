@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Modifier le cycle{% else %}Nouveau cycle{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if object %}Modifier le cycle{% else %}Nouveau cycle{% endif %}</h2>
+
+<form method="post" class="card">{% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="form-row">
+    <label for="{{ form.name.id_for_label }}">Nom du cycle :</label>
+    {{ form.name }}
+    {% for err in form.name.errors %}<div class="error">{{ err }}</div>{% endfor %}
+  </div>
+
+  <div class="form-row">
+    <label for="{{ form.notation.id_for_label }}">Notation :</label>
+    {{ form.notation }}
+    {% for err in form.notation.errors %}<div class="error">{{ err }}</div>{% endfor %}
+  </div>
+
+  <div class="actions">
+    <a class="btn btn--ghost" href="{% url 'cycle_list' %}">Annuler</a>
+    <button class="btn" type="submit">Enregistrer</button>
+  </div>
+
+  <!-- Suggestions (libres) -->
+  <datalist id="cycle-presets">
+    {% for s in cycle_presets %}
+      <option value="{{ s }}"></option>
+    {% endfor %}
+  </datalist>
+
+  <datalist id="notation-presets">
+    {% for n in notation_presets %}
+      <option value="{{ n }}"></option>
+    {% endfor %}
+  </datalist>
+</form>
+{% endblock %}

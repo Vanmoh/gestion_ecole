@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Nouveau cycle{% endblock %}
+
+{% block breadcrumb %}
+  <a href="#" class="breadcrumb-back">LISTE DES CYCLES</a>
+  <h1>Nouveau cycle</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="card w-640">
+    <div class="card-body">
+      <h2>Créer un nouveau cycle</h2>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+          <label for="{{ form.name.id_for_label }}">Nom du cycle :</label>
+          {{ form.name }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.grading.id_for_label }}">Notation :</label>
+          {{ form.grading }}
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Enregistrer</button>
+          <a class="btn btn-ghost" href="#">Annuler</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

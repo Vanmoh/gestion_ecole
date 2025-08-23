@@ -1,0 +1,5 @@
+Django==5.1.1
+mysqlclient==2.2.4
+django-environ==0.11.2
+WeasyPrint==62.3           # PDFs (bulletins/reçus)
+Pillow==10.4.0             # upload images si besoin

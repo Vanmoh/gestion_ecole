@@ -1,0 +1,199 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}GESTION ECOLE{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/scol.css' %}">
+</head>
+<body class="s-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="s-sidebar">
+    <div class="s-brand"><span class="zap">⚡</span>GESTION ECOLE</div>
+
+    <nav class="s-nav">
+      <!-- Tableau de bord -->
+      <a href="{% url 'dashboard' %}"
+         class="s-item {% if request.path|slice:':11' == '/dashboard' %}is-active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>Tableau de bord</span>
+      </a>
+
+      <!-- Gestion des élèves -->
+      <details class="s-group" id="nav-students"
+               {% if '/students/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>
+          <span>Gestion des élèves</span>
+        </summary>
+        <a href="{% url 'student_list' %}"
+           class="s-sub {% if request.path == '/students/' %}is-active{% endif %}">
+           Liste des élèves
+        </a>
+        <a href="{% url 'student_enroll_new' %}"
+           class="s-sub {% if '/students/enroll/new/' in request.path %}is-active{% endif %}">
+           Inscription Nouvel Élève
+        </a>
+        <a href="{% url 'student_enroll_old' %}"
+           class="s-sub {% if '/students/enroll/old/' in request.path %}is-active{% endif %}">
+           Inscription Ancien Élève
+        </a>
+        <a href="{% url 'student_stats' %}"
+           class="s-sub {% if '/students/stats/' in request.path %}is-active{% endif %}">
+           Tableau effectifs
+        </a>
+      </details>
+
+      <!-- Gestion des notes (placeholders, à câbler quand prêt) -->
+      <details class="s-group" id="nav-grades"
+               {% if '/grades/' in request.path or '/notes/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h12v2H3v-2z"/></svg>
+          <span>Gestion des notes</span>
+        </summary>
+        <a href="#"
+           class="s-sub {% if '/grades/' in request.path or '/notes/' in request.path %}is-active{% endif %}">
+           Saisie & Bulletins
+        </a>
+      </details>
+
+      <!-- Gestion des utilisateurs (liens admin prêts à l’emploi) -->
+      <details class="s-group" id="nav-users"
+               {% if '/admin/auth/user/' in request.path or '/admin/auth/group/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm-9 9v-1a7 7 0 0114 0v1H3z"/></svg>
+          <span>Gestion des utilisateurs</span>
+        </summary>
+        <a href="{% url 'admin:auth_user_changelist' %}"
+           class="s-sub {% if '/admin/auth/user/' in request.path %}is-active{% endif %}">
+           Utilisateurs (Admin)
+        </a>
+        <a href="{% url 'admin:auth_group_changelist' %}"
+           class="s-sub {% if '/admin/auth/group/' in request.path %}is-active{% endif %}">
+           Rôles & permissions
+        </a>
+      </details>
+
+      <!-- Finances (placeholders) -->
+      <details class="s-group" id="nav-finances"
+               {% if '/finances/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5 3.8 9.7 9 11 5.2-1.3 9-6 9-11V5l-9-4zM7 11h10v2H7v-2z"/></svg>
+          <span>Finances</span>
+        </summary>
+        <a href="#" class="s-sub {% if '/finances/' in request.path %}is-active{% endif %}">Tableau financier</a>
+      </details>
+
+      <!-- Cycles -->
+      <details class="s-group" id="nav-cycles"
+               {% if '/cycles/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM2 4h20v16H2z"/></svg>
+          <span>Cycles</span>
+        </summary>
+        <a href="{% url 'cycle_list' %}"
+           class="s-sub {% if '/cycles/' in request.path and not '/cycles/new/' in request.path %}is-active{% endif %}">
+           Liste des cycles
+        </a>
+        <a href="{% url 'cycle_new' %}"
+           class="s-sub {% if '/cycles/new/' in request.path %}is-active{% endif %}">
+           Ajouter
+        </a>
+      </details>
+
+      <!-- Classes -->
+      <details class="s-group" id="nav-classes"
+               {% if '/classes/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M3 3h18v6H3V3zm0 8h18v10H3V11z"/></svg>
+          <span>Classes</span>
+        </summary>
+        <a href="{% url 'classroom_list' %}"
+           class="s-sub {% if '/classes/' in request.path %}is-active{% endif %}">
+           Liste des classes
+        </a>
+      </details>
+
+      <!-- Assiduité (placeholders) -->
+      <details class="s-group" id="nav-attendance"
+               {% if '/attendance/' in request.path or '/assiduite/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zM2 12h4m12 0h4"/></svg>
+          <span>Assiduité</span>
+        </summary>
+        <a href="#" class="s-sub {% if '/attendance/' in request.path or '/assiduite/' in request.path %}is-active{% endif %}">Feuilles de présence</a>
+      </details>
+
+      <!-- Matières -->
+      <details class="s-group" id="nav-subjects"
+               {% if '/subjects/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M5 4h14v4H5zM5 10h14v10H5z"/></svg>
+          <span>Matières</span>
+        </summary>
+        <a href="{% url 'subject_list' %}"
+           class="s-sub {% if '/subjects/' in request.path %}is-active{% endif %}">
+           Liste des matières
+        </a>
+      </details>
+
+      <!-- Messages (placeholders) -->
+      <details class="s-group" id="nav-messages"
+               {% if '/messages/' in request.path %}open{% endif %}>
+        <summary class="s-group-title">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8v2H8zM8 12h8v2H8z"/></svg>
+          <span>Messages</span>
+        </summary>
+        <a href="#" class="s-sub {% if '/messages/' in request.path %}is-active{% endif %}">Boîte de réception</a>
+      </details>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="s-main">
+    <div class="s-topbar">
+      {% block breadcrumb %}{% endblock %}
+    </div>
+
+    <div class="s-page">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- Barre utilisateur en haut à droite -->
+  <div class="account-bar">
+    {% if request.user.is_authenticated %}
+      <span class="user-chip">
+        Bonjour, {{ request.user.get_full_name|default:request.user.username }}
+      </span>
+      <form action="{% url 'logout' %}" method="post" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-ghost">Se déconnecter</button>
+      </form>
+    {% else %}
+      <a class="btn btn-ghost" href="{% url 'login' %}">Se connecter</a>
+    {% endif %}
+  </div>
+
+  <!-- Mémorisation de l’état open/close pour TOUS les groupes -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.s-group[id]').forEach((d) => {
+      const KEY = 'nav-open:' + d.id;
+      const saved = localStorage.getItem(KEY);
+      if (saved === 'true') d.setAttribute('open', '');
+      if (saved === 'false') d.removeAttribute('open');
+      d.addEventListener('toggle', () => {
+        localStorage.setItem(KEY, d.open ? 'true' : 'false');
+      });
+    });
+  });
+  </script>
+
+</body>
+</html>

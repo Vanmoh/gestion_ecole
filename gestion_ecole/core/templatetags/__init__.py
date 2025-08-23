@@ -1,0 +1,1 @@
+# nécessaire pour déclarer le package templatetags

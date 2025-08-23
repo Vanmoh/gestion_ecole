@@ -1,0 +1,39 @@
+{# templates/students/list.html #}
+{% extends "base.html" %}
+{% block title %}Élèves{% endblock %}
+{% block breadcrumb %}<h2 class="page-title">Élèves</h2>{% endblock %}
+{% block content %}
+  <div class="toolbar">
+    <a class="btn btn-primary" href="{% url 'student_enroll_new' %}">+ Inscrire un élève</a>
+    <form method="get" class="search">
+      <input name="q" value="{{ request.GET.q }}" placeholder="Rechercher (nom, prénom, matricule)">
+    </form>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Matricule</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Sexe</th>
+        <th>Date de naissance</th>
+        <th>Classe</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in items %}
+        <tr>
+          <td>{{ s.matricule|default:"—" }}</td>
+          <td>{{ s.last_name }}</td>
+          <td>{{ s.first_name }}</td>
+          <td>{{ s.get_gender_display }}</td>
+          <td>{{ s.birth_date|date:"d/m/Y" }}</td>
+          <td>{{ s.classroom|default:"—" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6">Aucun élève trouvé.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

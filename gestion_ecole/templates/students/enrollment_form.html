@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Nouvelle inscription{% endblock %}
+
+{% block content %}
+<h2>Nouvelle inscription</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-row">
+    <label>Élève</label>
+    {{ form.student }}
+    {% for e in form.student.errors %}<div class="error">{{ e }}</div>{% endfor %}
+  </div>
+
+  <div class="form-row">
+    <label>Classe</label>
+    {{ form.classroom }}
+    {% for e in form.classroom.errors %}<div class="error">{{ e }}</div>{% endfor %}
+  </div>
+
+  <div style="margin-top:12px">
+    <button class="btn" type="submit">Enregistrer</button>
+    <a class="btn btn--ghost" href="{% url 'enrollment_list' %}">Annuler</a>
+  </div>
+</form>
+
+<p style="margin-top:16px">
+  <a href="{% url 'enrollment_list' %}">← Inscriptions</a>
+</p>
+{% endblock %}

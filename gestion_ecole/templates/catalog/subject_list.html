@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Matières{% endblock %}
+{% block content %}
+<h2>Matières</h2>
+<p>
+  {% if perms.catalog.add_subject %}
+    <a class="btn" href="{% url 'subject_new' %}">+ Nouvelle matière</a>
+  {% endif %}
+</p>
+<table class="table">
+  <thead><tr><th>Nom</th><th>Coefficient</th><th></th></tr></thead>
+  <tbody>
+    {% for s in items %}
+    <tr>
+      <td>{{ s.name }}</td>
+      <td>{{ s.coefficient }}</td>
+      <td style="white-space:nowrap">
+        {% if perms.catalog.change_subject %}<a href="{% url 'subject_edit' s.pk %}">Modifier</a>{% endif %}
+        {% if perms.catalog.delete_subject %} | <a href="{% url 'subject_delete' s.pk %}">Supprimer</a>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">Aucune matière.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

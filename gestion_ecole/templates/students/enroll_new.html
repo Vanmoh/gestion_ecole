@@ -1,0 +1,120 @@
+{# templates/students/enroll_new.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inscription – Nouvel élève{% endblock %}
+
+{% block breadcrumb %}
+  <h2 class="page-title">Inscription – Nouvel élève</h2>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <form method="post" enctype="multipart/form-data" class="form">
+    {% csrf_token %}
+
+    {% if messages %}
+      <ul class="messages">
+        {% for m in messages %}<li class="msg {{ m.tags }}">{{ m }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+
+    {# ——— Informations obligatoires ——— #}
+    <fieldset class="fieldset">
+      <legend>Informations obligatoires</legend>
+
+      <div class="grid-2">
+        <div class="form-row">
+          <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+          {{ form.last_name }}
+          {{ form.last_name.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+          {{ form.first_name }}
+          {{ form.first_name.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.birth_date.id_for_label }}">{{ form.birth_date.label }}</label>
+          {{ form.birth_date }}
+          {{ form.birth_date.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.gender.id_for_label }}">{{ form.gender.label }}</label>
+          {{ form.gender }}
+          {{ form.gender.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+          {{ form.city }}
+          {{ form.city.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.district.id_for_label }}">{{ form.district.label }}</label>
+          {{ form.district }}
+          {{ form.district.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.photo.id_for_label }}">{{ form.photo.label }}</label>
+          {{ form.photo }}
+          {{ form.photo.errors }}
+        </div>
+      </div>
+    </fieldset>
+
+    {# ——— Informations supplémentaires ——— #}
+    <fieldset class="fieldset">
+      <legend>Informations supplémentaires</legend>
+
+      <div class="grid-2">
+        <div class="form-row">
+          <label for="{{ form.matricule.id_for_label }}">{{ form.matricule.label }}</label>
+          {{ form.matricule }}
+          {{ form.matricule.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.classroom.id_for_label }}">{{ form.classroom.label }}</label>
+          {{ form.classroom }}
+          {{ form.classroom.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.enrollment_date.id_for_label }}">{{ form.enrollment_date.label }}</label>
+          {{ form.enrollment_date }}
+          {{ form.enrollment_date.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.parent_name.id_for_label }}">{{ form.parent_name.label }}</label>
+          {{ form.parent_name }}
+          {{ form.parent_name.errors }}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.parent_phone.id_for_label }}">{{ form.parent_phone.label }}</label>
+          {{ form.parent_phone }}
+          {{ form.parent_phone.errors }}
+        </div>
+
+        <div class="form-row form-col-2">
+          <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
+          {{ form.notes }}
+          {{ form.notes.errors }}
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+      <a href="{% url 'student_list' %}" class="btn btn-ghost">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

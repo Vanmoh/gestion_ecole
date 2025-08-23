@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Niveaux{% endblock %}
+{% block content %}
+<h2>Niveaux</h2>
+<p>
+  {% if perms.catalog.add_grade %}
+    <a class="btn" href="{% url 'grade_new' %}">+ Nouveau niveau</a>
+  {% endif %}
+</p>
+<table class="table">
+  <thead><tr><th>Nom</th><th>Ordre</th><th></th></tr></thead>
+  <tbody>
+    {% for g in items %}
+    <tr>
+      <td>{{ g.name }}</td>
+      <td>{{ g.level }}</td>
+      <td style="white-space:nowrap">
+        {% if perms.catalog.change_grade %}<a href="{% url 'grade_edit' g.pk %}">Modifier</a>{% endif %}
+        {% if perms.catalog.delete_grade %} | <a href="{% url 'grade_delete' g.pk %}">Supprimer</a>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">Aucun niveau.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

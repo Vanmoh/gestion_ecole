@@ -1,0 +1,33 @@
+body { font-family: system-ui, Arial, sans-serif; margin:0; background:#f7f7fb; }
+.navbar { display:flex; gap:16px; align-items:center; padding:10px 16px; background:#101828; color:#fff; }
+.navbar a { color:#fff; text-decoration:none; }
+.nav-right { margin-left:auto; opacity:.85; }
+.container { max-width:1100px; margin:24px auto; background:#fff; padding:24px; border-radius:12px; box-shadow:0 4px 18px rgba(16,24,40,.06); }
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { border-bottom:1px solid #eee; padding:10px; text-align:left; }
+.btn { display:inline-block; background:#2156f3; color:#fff; padding:8px 12px; border-radius:8px; text-decoration:none; }
+.btn--ghost { background:#e7eefe; color:#2156f3; }
+
+.msg.success { background:#ecfdf3; color:#065f46; }
+.msg.error   { background:#fef2f2; color:#991b1b; }
+.msg.warning { background:#fffbeb; color:#92400e; }
+
+
+
+.nav-group { margin: 4px 8px; }
+.nav-summary {
+  display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; padding:10px 12px; border-radius:10px;
+}
+.nav-summary:hover { background: rgba(0,0,0,.04); }
+.nav-left { display:flex; gap:10px; align-items:center; }
+.nav-ico { width:20px; display:inline-flex; justify-content:center; }
+
+.nav-submenu { list-style:none; padding-left:34px; margin:6px 0 10px; }
+.nav-submenu a {
+  display:block; padding:7px 10px; border-radius:8px; text-decoration:none;
+}
+.nav-submenu a:hover { background: rgba(0,0,0,.05); }
+
+.chevron { transition: transform .15s ease; opacity:.6; }
+.nav-group[open] .chevron { transform: rotate(90deg); }

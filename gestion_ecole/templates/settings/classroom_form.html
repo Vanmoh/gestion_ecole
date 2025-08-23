@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Nouvelle classe{% endblock %}
+
+{% block content %}
+<h2>Nouvelle classe</h2>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  <div class="form-field">
+    {{ form.school.label_tag }}{{ form.school }}
+  </div>
+
+  <div class="form-field">
+    {{ form.cycle.label_tag }}{{ form.cycle }}
+    <p class="help">La liste se filtre automatiquement par école.</p>
+  </div>
+
+  <div class="form-field">
+    {{ form.label.label_tag }}
+    {{ form.label }}  {# l’input a déjà l’attribut list="class-name-suggestions" via le widget #}
+    <datalist id="class-name-suggestions"></datalist>
+    <p class="help">Tu peux choisir une suggestion ou saisir librement.</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn--primary" type="submit">Enregistrer</button>
+    <a class="btn btn--ghost" href="{% url 'classroom_list' %}">Annuler</a>
+  </div>
+</form>
+
+{{ label_presets|json_script:"js_initial_presets" }}
+{{ PRESETS_PRESCO|json_script:"js_presco" }}
+{{ PRESETS_FOND1|json_script:"js_fond1" }}
+{{ PRESETS_FOND2|json_script:"js_fond2" }}
+{{ PRESETS_SECONDAIRE|json_script:"js_secondaire" }}
+{{ PRESETS_SUPERIEUR|json_script:"js_superieur" }}
+
+<script>
+(function () {
+  function J(id){ return JSON.parse(document.getElementById(id).textContent); }
+  const INITIAL     = J("js_initial_presets");
+  const PRESCO      = J("js_presco");      // 1ère → 3ème
+  const FOND1       = J("js_fond1");       // 1ère → 9ème
+  const FOND2       = J("js_fond2");
+  const SECONDAIRE  = J("js_secondaire");
+  const SUPERIEUR   = J("js_superieur");
+
+  const datalist = document.getElementById("class-name-suggestions");
+  const cycleSel = document.getElementById("id_cycle");
+
+  function fillDatalist(list){
+    datalist.innerHTML = "";
+    (list || []).forEach(v => {
+      const o = document.createElement("option");
+      o.value = v;
+      datalist.appendChild(o);
+    });
+  }
+
+  function presetsFor(cycleName){
+    const n = (cycleName || "").toLowerCase();
+    if (/(présco|presco|jardin|crèche|creche)/.test(n)) return PRESCO;   // limité à 3ème
+    if (/(1er cycle|premier cycle)/.test(n))            return FOND1;    // jusqu’à 9ème
+    if (/(2ème cycle|2eme cycle|deuxième cycle|deuxieme cycle)/.test(n)) return FOND2;
+    if (/(secondaire|lycée|lycee|technique|professionnel)/.test(n))      return SECONDAIRE;
+    if (/(supérieure|superieure|universit)/.test(n))                      return SUPERIEUR;
+    return [];
+  }
+
+  // Remplissage initial
+  if (INITIAL && INITIAL.length){
+    fillDatalist(INITIAL);
+  } else if (cycleSel){
+    const txt = cycleSel.options[cycleSel.selectedIndex]?.text || "";
+    fillDatalist(presetsFor(txt));
+  }
+
+  // Mise à jour quand le cycle change
+  if (cycleSel){
+    cycleSel.addEventListener("change", function(){
+      const txt = this.options[this.selectedIndex]?.text || "";
+      fillDatalist(presetsFor(txt));
+    });
+  }
+})();
+</script>
+{% endblock %}

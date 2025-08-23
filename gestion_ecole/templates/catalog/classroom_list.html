@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Classes{% endblock %}
+{% block content %}
+<h2>Classes</h2>
+<p>
+  {% if perms.catalog.add_classroom %}
+    <a class="btn" href="{% url 'classroom_new' %}">+ Nouvelle classe</a>
+  {% endif %}
+</p>
+<table class="table">
+  <thead><tr><th>Libellé</th><th>Niveau</th><th>Prof principal</th><th>Capacité</th><th></th></tr></thead>
+  <tbody>
+    {% for c in items %}
+    <tr>
+      <td>{{ c.label }}</td>
+      <td>{{ c.grade.name }}</td>
+      <td>{% if c.main_teacher %}{{ c.main_teacher.get_full_name|default:c.main_teacher.username }}{% else %}-{% endif %}</td>
+      <td>{{ c.capacity }}</td>
+      <td style="white-space:nowrap">
+        {% if perms.catalog.change_classroom %}<a href="{% url 'classroom_edit' c.pk %}">Modifier</a>{% endif %}
+        {% if perms.catalog.delete_classroom %} | <a href="{% url 'classroom_delete' c.pk %}">Supprimer</a>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Aucune classe.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+

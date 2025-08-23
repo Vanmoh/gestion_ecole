@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Cycles{% endblock %}
+{% block content %}
+<h2>Cycles</h2>
+
+<form method="get" style="display:flex;gap:8px;align-items:center;margin:12px 0">
+  <input name="q" value="{{ q }}" placeholder="Rechercher un cycle ou notation…" style="min-width:260px">
+  <button class="btn btn--ghost" type="submit">Rechercher</button>
+  <a class="btn" href="{% url 'cycle_new' %}">+ Nouveau cycle</a>
+</form>
+
+<table class="table">
+  <thead>
+    <tr><th>Nom</th><th>Notation</th><th style="width:160px">Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for c in items %}
+      <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.scale }}</td>
+        <td>
+          <a href="{% url 'cycle_edit' c.id %}">Modifier</a>
+          <form method="post" action="{% url 'cycle_delete' c.id %}" style="display:inline">{% csrf_token %}
+            <input type="hidden" name="q" value="{{ q }}">
+            <button class="link link--danger" onclick="return confirm('Supprimer ce cycle ?')">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3">Aucun cycle.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% if is_paginated %}
+<nav class="pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px">
+  {% if page_obj.has_previous %}
+    <a class="btn btn--ghost" href="?q={{ q }}&page=1">« Première</a>
+    <a class="btn btn--ghost" href="?q={{ q }}&page={{ page_obj.previous_page_number }}">Précédent</a>
+  {% endif %}
+  <span>Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a class="btn btn--ghost" href="?q={{ q }}&page={{ page_obj.next_page_number }}">Suivant</a>
+    <a class="btn btn--ghost" href="?q={{ q }}&page={{ page_obj.paginator.num_pages }}">Dernière »</a>
+  {% endif %}
+</nav>
+{% endif %}

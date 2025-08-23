@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Classes{% endblock %}
+
+{% block content %}
+<h2>Classes</h2>
+
+<form method="get" style="display:flex; gap:8px; align-items:center; margin:12px 0">
+  <input type="search" name="q" value="{{ q }}" placeholder="Rechercher (classe / cycle / école)">
+  <button class="btn btn--ghost" type="submit">Rechercher</button>
+  <a class="btn" href="{% url 'classroom_new' %}">+ Nouvelle classe</a>
+</form>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>École</th>
+      <th>Cycle</th>
+      <th>Nom de la classe</th>
+      <th style="width:160px"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for c in items %}
+    <tr>
+      <td>{{ c.school.name }}</td>
+      <td>{{ c.cycle.name }}</td>
+      <td>{{ c.label }}</td>
+      <td>
+        <a href="{% url 'classroom_edit' c.id %}">Modifier</a> |
+        <a href="{% url 'classroom_delete' c.id %}" onclick="return confirm('Supprimer {{ c.label }} ?')">Supprimer</a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">Aucune classe.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

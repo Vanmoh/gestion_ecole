@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Transférer l’inscription{% endblock %}
+
+{% block content %}
+<h2>Transférer l’inscription</h2>
+
+<p>
+  <strong>Élève :</strong>
+  {{ object.student.last_name }} {{ object.student.first_name }} —
+  <strong>Classe actuelle :</strong> {{ object.classroom.label }} —
+  <strong>Année :</strong> {{ object.school_year.label }}
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-row">
+    <label>Classe cible</label>
+    {{ form.classroom }}
+    {% for e in form.classroom.errors %}<div class="error">{{ e }}</div>{% endfor %}
+  </div>
+
+  <div style="margin-top:12px">
+    <button class="btn" type="submit">Transférer</button>
+    <a class="btn btn--ghost" href="{% url 'enrollment_list' %}">Annuler</a>
+  </div>
+</form>
+
+<p style="margin-top:16px">
+  <a href="{% url 'enrollment_list' %}">← Inscriptions</a>
+</p>
+{% endblock %}

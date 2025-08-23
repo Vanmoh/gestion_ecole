@@ -1,0 +1,42 @@
+{# students/enroll_old.html #}
+{% extends "base.html" %}
+{% block title %}Inscription anciens élèves{% endblock %}
+
+{% block content %}
+<h1>Inscription anciens élèves</h1>
+
+<form method="post" class="form">
+  {% csrf_token %}
+  <div class="form-grid">
+    <div class="form-field">
+      <label>{{ form.student.label }}</label>
+      {{ form.student }}
+      {% if form.student.help_text %}<small class="help">{{ form.student.help_text }}</small>{% endif %}
+      {{ form.student.errors }}
+    </div>
+
+    <div class="form-field">
+      <label>{{ form.classroom.label }}</label>
+      {{ form.classroom }}
+      {{ form.classroom.errors }}
+    </div>
+
+    <div class="form-field">
+      <label>{{ form.enrollment_date.label }}</label>
+      {{ form.enrollment_date }}
+      {{ form.enrollment_date.errors }}
+    </div>
+
+    <div class="form-field">
+      <label>{{ form.notes.label }}</label>
+      {{ form.notes }}
+      {{ form.notes.errors }}
+    </div>
+  </div>
+
+  <div class="form-actions" style="margin-top:1rem">
+    <button type="submit" class="btn">Enregistrer</button>
+    <a href="{% url 'student_list' %}" class="btn btn--ghost">Annuler</a>
+  </div>
+</form>
+{% endblock %}

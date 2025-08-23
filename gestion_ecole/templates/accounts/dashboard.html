@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+
+  <!-- Résumé / KPIs -->
+  <section class="dash-kpis">
+    <div class="kpi">
+      <div class="kpi-label">Élèves</div>
+      <div class="kpi-value">{{ stats.students|default:0 }}</div>
+      <a class="kpi-link" href="{% url 'student_list' %}">Voir la liste</a>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-label">Classes</div>
+      <div class="kpi-value">{{ stats.classes|default:0 }}</div>
+      <a class="kpi-link" href="/settings/classes/">Gérer</a>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-label">Matières</div>
+      <div class="kpi-value">{{ stats.subjects|default:0 }}</div>
+      <a class="kpi-link" href="/settings/subjects/">Gérer</a>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-label">Inscriptions {{ current_school_year.label|default:"" }}</div>
+      <div class="kpi-value">{{ stats.enrollments|default:0 }}</div>
+      {# on pointe vers la page "Tableau effectifs / stats" #}
+      <a class="kpi-link" href="{% url 'student_stats' %}">Ouvrir</a>
+    </div>
+  </section>
+
+  <!-- Grille principale -->
+  <section class="dash-main">
+    <div class="card">
+      <h3>Bienvenue 👋</h3>
+      <p>Utilisez les actions rapides pour aller plus vite.</p>
+
+      <div class="quick-actions">
+        {# Nouveau : formulaire d'inscription d'un nouvel élève #}
+        <a class="btn" href="{% url 'student_enroll_new' %}">+ Nouvel élève</a>
+
+        {# Inscription d'un ancien élève #}
+        <a class="btn btn--ghost" href="{% url 'student_enroll_old' %}">+ Inscription (ancien)</a>
+
+        {# Import CSV : garde ce lien si tu as une URL correspondante #}
+        <a class="btn btn--ghost" href="/students/import/">Import CSV</a>
+
+        <a class="btn btn--ghost" href="/settings/school-years/">Années scolaires</a>
+        <a class="btn btn--ghost" href="/settings/classes/">Classes</a>
+        <a class="btn btn--ghost" href="/settings/subjects/">Matières</a>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h3>Année en cours</h3>
+        <p style="margin:.5rem 0 0">
+          <strong>{{ current_school_year.label|default:"Aucune" }}</strong><br>
+          <small>
+            {{ current_school_year.start_date|date:"d/m/Y" }}
+            → {{ current_school_year.end_date|date:"d/m/Y" }}
+          </small>
+        </p>
+        <p style="margin:.75rem 0 0">
+          <a class="link" href="/settings/school-years/">Changer d’année</a>
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Top 5 classes (effectifs)</h3>
+        {% if top_classes %}
+          <ul class="list">
+            {% for c in top_classes %}
+              <li>{{ c.label }} <span class="tag">{{ c.count }}</span></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>Aucune donnée disponible.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

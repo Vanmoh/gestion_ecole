@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Import CSV — Inscriptions{% endblock %}
+
+{% block content %}
+<h2>Import CSV des inscriptions — {{ school_year.label }}</h2>
+<p>Format attendu : <code>matricule;classroom_id</code> (les en-têtes sont optionnels). Le séparateur peut être <kbd>;</kbd> ou <kbd>,</kbd>.</p>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="file" name="file" accept=".csv,text/csv" required>
+  <div style="margin-top:12px">
+    <button class="btn" type="submit">Importer</button>
+    <a class="btn btn--ghost" href="{% url 'enrollment_list' %}">Annuler</a>
+  </div>
+</form>
+
+<hr>
+<h3>Exemple</h3>
+<pre>matricule;classroom_id
+GS25_A00001;12
+GS25_A00002;12
+</pre>
+
+<p style="margin-top:16px">
+  <a href="{% url 'enrollment_list' %}">← Inscriptions</a>
+</p>
+{% endblock %}

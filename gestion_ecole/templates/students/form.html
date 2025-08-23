@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Nouvel élève{% endblock %}
+
+{% block content %}
+<h2>Nouvel élève</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="form-grid" style="display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:12px">
+    <div class="form-row">
+      {{ form.school.label_tag }} {{ form.school }}
+      {% for e in form.school.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="form-row">
+      {{ form.matricule.label_tag }} {{ form.matricule }}
+      {% for e in form.matricule.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="form-row">
+      {{ form.last_name.label_tag }} {{ form.last_name }}
+      {% for e in form.last_name.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="form-row">
+      {{ form.first_name.label_tag }} {{ form.first_name }}
+      {% for e in form.first_name.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="form-row">
+      {{ form.sex.label_tag }} {{ form.sex }}
+      {% for e in form.sex.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="form-row">
+      {{ form.birthdate.label_tag }} {{ form.birthdate }}
+      {% for e in form.birthdate.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+  </div>
+
+  <div style="margin-top:12px;display:flex;gap:8px">
+    <button class="btn" type="submit">Enregistrer</button>
+    <a class="btn btn--ghost" href="{% url 'student_list' %}">Annuler</a>
+  </div>
+</form>
+{% endblock %}
