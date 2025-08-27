@@ -1,0 +1,14 @@
+{% for s in items %}
+<tr>
+  <td>{{ s.matricule|default:"—" }}</td>
+  <td>{{ s.last_name }}</td>
+  <td>{{ s.first_name }}</td>
+  <td>{{ s.get_gender_display|default:"—" }}</td>
+  <td>{% if s.birth_date %}{{ s.birth_date|date:"d/m/Y" }}{% else %}—{% endif %}</td>
+  <td>{{ s.classroom.label|default:"—" }}</td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="6" style="text-align:center; padding:16px">Aucun élève trouvé.</td>
+</tr>
+{% endfor %}

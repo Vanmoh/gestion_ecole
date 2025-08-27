@@ -1,22 +1,76 @@
 {% extends "base.html" %}
 {% block title %}Connexion{% endblock %}
+
 {% block content %}
-  <h2>Connexion</h2>
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {% if form.non_field_errors %}
-      <div style="color:#b42318;margin-bottom:8px">{{ form.non_field_errors }}</div>
-    {% endif %}
-    <div style="margin-bottom:8px">
-      <label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label><br>
-      {{ form.username }}
-    </div>
-    <div style="margin-bottom:12px">
-      <label for="{{ form.password.id_for_label }}">Mot de passe</label><br>
-      {{ form.password }}
-    </div>
-    <button class="btn" type="submit">Se connecter</button>
-  </form>
-  <p style="margin-top:10px"><a href="/admin/">Aller à l’administration</a></p>
+  <style>
+    /* Masquer la sidebar et centrer le formulaire */
+    .s-sidebar{ display:none }
+    .s-main{ margin-left:0 }
+    .s-topbar{ display:none }
+    .auth-wrap{
+      min-height:calc(100vh - 40px);
+      display:grid;place-items:center
+    }
+    .auth-card{
+      width:100%;max-width:420px;background:#fff;
+      border:1px solid #e5e7eb;border-radius:16px;
+      padding:22px;box-shadow:0 4px 16px rgba(15,23,42,.06)
+    }
+    .auth-card h1{margin:0 0 12px 0;font-size:22px;color:#0f172a}
+    .auth-card p.lead{margin:0 0 18px 0;color:#64748b}
+    .field{margin-bottom:12px}
+    .field label{display:block;font-weight:600;color:#334155;margin-bottom:6px}
+    .field input{
+      width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;
+      font-size:14px;outline:none
+    }
+    .field input:focus{border-color:#94a3b8;box-shadow:0 0 0 3px #e2e8f0}
+    .btn-primary{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:10px 14px;border-radius:10px;border:1px solid #0ea5e9;
+      background:#0ea5e9;color:#fff;font-weight:700;width:100%
+    }
+    .hint{color:#64748b;font-size:13px;margin-top:10px;text-align:center}
+    .err{
+      background:#fee4e2;border:1px solid #fecdca;color:#b42318;
+      padding:10px 12px;border-radius:10px;margin-bottom:10px
+    }
+  </style>
+
+  <div class="auth-wrap">
+    <form method="post" class="auth-card" novalidate>
+      {% csrf_token %}
+      <h1>ACCES GESTION SCOLAIRE</h1>
+      <p class="lead">Accédez au tableau de bord de l’école.</p>
+
+      {% if form.non_field_errors %}
+        <div class="err">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Nom d’utilisateur</label>
+        {{ form.username }}
+      </div>
+
+      <div class="field" style="margin-bottom:16px">
+        <label for="{{ form.password.id_for_label }}">Mot de passe</label>
+        {{ form.password }}
+      </div>
+
+      {% if form.errors %}
+        {# Affiche les erreurs de champs individuellement #}
+        <div class="err">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <div>{{ field.label }} — {{ error }}</div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <button class="btn-primary" type="submit">Se connecter</button>
+
+      <p class="hint"><a href="/admin/">Aller à l’administration</a></p>
+    </form>
+  </div>
 {% endblock %}
-HTML

@@ -1,39 +1,94 @@
-{# templates/students/list.html #}
 {% extends "base.html" %}
-{% block title %}Élèves{% endblock %}
-{% block breadcrumb %}<h2 class="page-title">Élèves</h2>{% endblock %}
+{% load static %}
+
+{% block title %}Élèves — Liste{% endblock %}
+
+{% block breadcrumb %}
+  <span>Gestion des élèves</span> / <strong>Liste des élèves</strong>
+{% endblock %}
+
 {% block content %}
-  <div class="toolbar">
-    <a class="btn btn-primary" href="{% url 'student_enroll_new' %}">+ Inscrire un élève</a>
-    <form method="get" class="search">
-      <input name="q" value="{{ request.GET.q }}" placeholder="Rechercher (nom, prénom, matricule)">
-    </form>
+<div class="card">
+  <div class="card-head">
+    <h1>Élèves</h1>
+
+    <div class="actions">
+      <a class="btn" href="{% url 'student_enroll_new' %}">+ Inscrire un élève</a>
+      <form method="get" action="" class="search">
+        <input type="text" name="q" value="{{ q }}" placeholder="Rechercher (nom, prénom, matricule)" />
+      </form>
+    </div>
   </div>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Matricule</th>
-        <th>Nom</th>
-        <th>Prénom</th>
-        <th>Sexe</th>
-        <th>Date de naissance</th>
-        <th>Classe</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for s in items %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
         <tr>
-          <td>{{ s.matricule|default:"—" }}</td>
-          <td>{{ s.last_name }}</td>
-          <td>{{ s.first_name }}</td>
-          <td>{{ s.get_gender_display }}</td>
-          <td>{{ s.birth_date|date:"d/m/Y" }}</td>
-          <td>{{ s.classroom|default:"—" }}</td>
+          <th>Matricule</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Sexe</th>
+          <th>Date de naissance</th>
+          <th>Classe</th>
         </tr>
-      {% empty %}
-        <tr><td colspan="6">Aucun élève trouvé.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody id="rows">
+        {% include "students/_list_rows.html" %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Fallback pagination (si JS désactivé) #}
+  <noscript>
+    <nav class="pager">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}">← Précédent</a>
+      {% endif %}
+      <span>Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}">Suivant →</a>
+      {% endif %}
+    </nav>
+  </noscript>
+
+  {# Sentinelle pour scroll infini #}
+  {% if page_obj.has_next %}
+    <div id="infinite-sentinel"
+         data-next="?page={{ page_obj.next_page_number }}&partial=1{% if q %}&q={{ q|urlencode }}{% endif %}">
+    </div>
+  {% endif %}
+</div>
+
+<script>
+(function () {
+  const rows = document.getElementById('rows');
+  const sentinel = document.getElementById('infinite-sentinel');
+  if (!rows || !sentinel) return;
+
+  const loadMore = async () => {
+    const next = sentinel.dataset.next;
+    if (!next) return;
+    const resp = await fetch(location.pathname + next, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
+    if (!resp.ok) return;
+    const html = await resp.text();
+    rows.insertAdjacentHTML('beforeend', html);
+
+    const nextPage = resp.headers.get('X-Next-Page');
+    if (nextPage) {
+      sentinel.dataset.next = `?page=${nextPage}&partial=1{% if q %}&q={{ q|urlencode }}{% endif %}`;
+    } else {
+      observer.disconnect();
+      sentinel.remove();
+    }
+  };
+
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadMore();
+  }, { rootMargin: '400px 0px' });
+
+  observer.observe(sentinel);
+})();
+</script>
 {% endblock %}

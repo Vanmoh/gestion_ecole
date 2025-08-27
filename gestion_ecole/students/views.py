@@ -24,29 +24,53 @@ class StudentsHubView(LoginRequiredMixin, TemplateView):
 
 
 # ——————————————————————————————————————
-#  Liste des élèves
+#  Liste des élèves — pagination infinie
 # ——————————————————————————————————————
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
-    template_name = "students/list.html"
+    template_name = "students/list.html"          # template "plein"
     context_object_name = "items"
     paginate_by = 50
     ordering = ["last_name", "first_name"]
 
+    # permet de changer le pas via ?per=25|50|75|100…
+    def get_paginate_by(self, queryset):
+        try:
+            return int(self.request.GET.get("per", self.paginate_by))
+        except (TypeError, ValueError):
+            return self.paginate_by
+
+    # si ?partial=1 => on renvoie seulement les <tr> (fragment)
+    def get_template_names(self):
+        if self.request.GET.get("partial") == "1":
+            return ["students/_student_rows.html"]
+        return [self.template_name]
+
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = (
+            super()
+            .get_queryset()
+            .select_related("classroom", "classroom__cycle")
+            .order_by(*self.ordering)
+        )
         q = (self.request.GET.get("q") or "").strip()
         if q:
             qs = qs.filter(
-                Q(last_name__icontains=q) |
-                Q(first_name__icontains=q) |
-                Q(matricule__icontains=q)
+                Q(last_name__icontains=q)
+                | Q(first_name__icontains=q)
+                | Q(matricule__icontains=q)
+                | Q(classroom__label__icontains=q)
+                | Q(classroom__cycle__name__icontains=q)
             )
         return qs
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["q"] = (self.request.GET.get("q") or "").strip()
+        try:
+            ctx["per"] = int(self.request.GET.get("per", self.paginate_by))
+        except (TypeError, ValueError):
+            ctx["per"] = self.paginate_by
         return ctx
 
 
@@ -94,52 +118,3 @@ class StudentStatsView(LoginRequiredMixin, TemplateView):
         ctx["per_class"] = per_class
         ctx["total_students"] = Student.objects.count()
         return ctx
-
-
-
-
-
-
-
-
-
-
-
-
-
-# students/views.py (ajout)
-from django.views.generic.edit import FormView
-from .forms import StudentEnrollOldForm
-from django.urls import reverse_lazy
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-class StudentEnrollOldView(LoginRequiredMixin, FormView):
-    template_name = "students/enroll_old.html"
-    form_class = StudentEnrollOldForm
-    success_url = reverse_lazy("student_list")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["school_id"] = self.request.session.get("active_school_id")
-        return kwargs
-
-    def form_valid(self, form):
-        student = form.cleaned_data["student"]
-        classroom = form.cleaned_data["classroom"]
-        enrollment_date = form.cleaned_data["enrollment_date"]
-        notes = form.cleaned_data.get("notes", "")
-
-        # Inscrire l’ancien élève : on met à jour sa classe + date + notes
-        student.classroom = classroom
-        student.enrollment_date = enrollment_date
-        if notes:
-            # Concaténer proprement si des notes existent déjà
-            student.notes = (student.notes + "\n" if student.notes else "") + notes
-        student.save()
-
-        messages.success(
-            self.request,
-            f"Inscription (ancien élève) enregistrée pour {student.last_name} {student.first_name} en {classroom.label}."
-        )
-        return super().form_valid(form)
